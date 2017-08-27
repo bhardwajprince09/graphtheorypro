@@ -1,10 +1,15 @@
 // cy is the id of DOm element where graphs will come
-
-// sets width 
-$("#cy").css("width",window.innerWidth+"px");
-//sets height
-$("#cy").css("height",window.innerHeight+"px");
-
+function createGraph(name,n){
+	var html = "";
+	html = "<div id='"+name+"'></div>";
+	$('document').append(html);
+}
+function setWidth(name,width,hight){
+	// sets width 
+	$("#"+name).css("width",width+"px");
+	//sets height
+	$("#"+name).css("height",height+"px");
+}
 
 var nodeCount = 0;
 var d =[];
@@ -12,8 +17,7 @@ var d =[];
 init(5);
 
 //function to initialize number of nodes
-function init(n){
-  nodeCount = n;
+function init(name,n){
   for(x = 0;x < n;x++){
     d.push(createNode(x));
   }
