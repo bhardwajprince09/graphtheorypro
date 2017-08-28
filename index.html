@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<html >
+
+<head>
+  <meta charset="UTF-8">
+  <title>Graph Visulaizer</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville" rel="stylesheet">
+  <style>
+  .main{
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:100%;
+    height:100%;
+  }
+  .head{
+    font-family: 'Libre Baskerville', serif;
+    font-size:35px;
+    text-align:center;
+    padding-top:30px;
+    color:#FF634D;
+  }
+  button{
+    color:aqua;
+    border:3px solid;
+    background-color:rgba(0,0,0,.5);
+    margin-top:25%;
+  }
+    body { margin: 0; overflow: hidden; }
+#a{ width: 100vw; height: 100vh; }
+ .h1{
+    background-color: rgba(0,0,0,.5);
+    color: aqua;
+    padding: 1%;
+}
+.name {
+    width: 100%;
+    text-align: center;
+    font-size: 25px;
+    background-color: rgba(0,0,0,.7);
+    color: white;
+    }
+  </style>
+  
+  
+  
+  
+  
+  
+  
+</head>
+
+<body translate="no" >
+    <canvas id=a></canvas> 
+  <div style="background-color:rgba(255,0,255,0.2);margin:-1%;position: absolute;
+    top: 0px;height:105%;" id="large-header" class="large-header">
+  <div class="main">
+    <div class="head"><div class="h1">Graph Theory Project</div >
+    <div class="h1">
+        Edge Disjoint Subgraphs
+    </div>
+    <div class="started"><button><a href='graph.html'>Get Started</a></button></div>
+    </div>  
+  </div>
+										<canvas height="201" width="1366" id="demo-canvas"></canvas>
+									</div>
+									<div class="name">Designed and Developed by Team 5 (@Reshabh @Prince @Nancy @Karishma @Kajal @Prashant)</div>
+   <script>
+    d=document
+b=d.body
+c=a.getContext("2d")
+w=a.width=innerWidth
+h=a.height=innerHeight
+with(Math)S=sin,C=cos,Q=sqrt,dg=PI/180,M=min
+rot=0
+drot=dg
+
+~function loop(t) {
+  j=/*S(t*1e-4) * 1*/0 
+  c.fillStyle='#000'
+	c.fillRect(0,0,w,h)
+	c.save()
+	c.translate(w/2, h/2)
+	c.rotate(rot*dg)
+	for (i=360;i--;) {
+		c.rotate(dg*i)
+		c.translate(1,0)
+		c.scale(1.005+S(t/5e2)/1e3,1)
+    c.globalCompositeOperation='lighter'
+		c.fillStyle='hsla('+i*36+',75%,'+(67-i/3)+'%,0.3)'
+		c.fillRect(-100+(j+360-i)*C((rot-i)*dg), -100+(j+360-i)*S((rot-i)*dg), 200-i/3, 200-i/3)
+	}
+	rot = rot+drot
+	drot=M(drot+dg/10, dg*45)
+	c.restore()
+	requestAnimationFrame(loop)
+}(0)
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenLite.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/easing/EasePack.min.js'></script>
+
+    <script>
+    (function() {
+    var width, height, largeHeader, canvas, ctx, points, target, animateHeader = true;
+  //var color='rgba(255,255,0,';
+  var color = 'rgba(255,255,0,';
+  //var dot_color = '#FD795B';
+  
+  var  dot_color='rgba(0,255,255,1      )'
+    initHeader();
+    initAnimation();
+    addListeners();
+
+    function initHeader() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        target = {
+            x: width / 2,
+            y: height / 2
+        };
+        largeHeader = document.getElementById('large-header');
+        largeHeader.style.height = height + 'px';
+        canvas = document.getElementById('demo-canvas');
+        canvas.width = width;
+        canvas.height = height;
+        ctx = canvas.getContext('2d');
+        points = [];
+        // no of points
+        for (var x = 0; x < width; x = x + width / 40) {
+            for (var y = 0; y < height; y = y + height / 40) {
+                var px = x + Math.random() * width / 20;
+                var py = y + Math.random() * height / 20;
+                var p = {
+                    x: px,
+                    originX: px,
+                    y: py,
+                    originY: py
+                };
+                points.push(p);
+            }
+        }
+        for (var i = 0; i < points.length; i++) {
+            var closest = [];
+            var p1 = points[i];
+            for (var j = 0; j < points.length; j++) {
+                var p2 = points[j]
+                if (!(p1 == p2)) {
+                    var placed = false;
+                    for (var k = 0; k < 5; k++) {
+                        if (!placed) {
+                            if (closest[k] == undefined) {
+                                closest[k] = p2;
+                                placed = true;
+                            }
+                        }
+                    }
+                    for (var k = 0; k < 5; k++) {
+                        if (!placed) {
+                            if (getDistance(p1, p2) < getDistance(p1, closest[k])) {
+                                closest[k] = p2;
+                                placed = true;
+                            }
+                        }
+                    }
+                }
+            }
+            p1.closest = closest;
+        }
+        for (var i in points) {
+            var c = new Circle(points[i], 2 + Math.random() * 3, color+'0.3)');
+            points[i].circle = c;
+        }
+    }
+
+    function addListeners() {
+        if (!('ontouchstart' in window)) {
+            window.addEventListener('mousemove', mouseMove);
+        }
+        window.addEventListener('scroll', scrollCheck);
+        window.addEventListener('resize', resize);
+    }
+
+    function mouseMove(e) {
+        var posx = posy = 0;
+        if (e.pageX || e.pageY) {
+            posx = e.pageX;
+            posy = e.pageY;
+        } else if (e.clientX || e.clientY) {
+            posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        }
+        target.x = posx;
+        target.y = posy;
+    }
+
+    function scrollCheck() {
+        if (document.body.scrollTop > height) animateHeader = false;
+        else animateHeader = true;
+    }
+
+    function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        largeHeader.style.height = height + 'px';
+        canvas.width = width;
+        canvas.height = height;
+    }
+
+    function initAnimation() {
+        animate();
+        for (var i in points) {
+            shiftPoint(points[i]);
+        }
+    }
+
+    function animate() {
+        if (animateHeader) {
+            ctx.clearRect(0, 0, width, height);
+            for (var i in points) {
+                if (Math.abs(getDistance(target, points[i])) < 4000) {
+                    points[i].active = 0.35;
+                    points[i].circle.active = 0.65;
+                } else if (Math.abs(getDistance(target, points[i])) < 20000) {
+                    points[i].active = 0.15;
+                    points[i].circle.active = 0.35;
+                } else if (Math.abs(getDistance(target, points[i])) < 40000) {
+                    points[i].active = 0.025;
+                    points[i].circle.active = 0.15;
+                } else {
+                    points[i].active = 0;
+                    points[i].circle.active = 0;
+                }
+                drawLines(points[i]);
+                points[i].circle.draw();
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+
+    function shiftPoint(p) {
+        TweenLite.to(p, 1 + 1 * Math.random(), {
+            x: p.originX - 10 + Math.random() * 100,
+            y: p.originY - 10 + Math.random() * 100,
+            ease: Circ.easeInOut,
+            onComplete: function() {
+                shiftPoint(p);
+            }
+        });
+    }
+
+    function drawLines(p) {
+        if (!p.active) return;
+        for (var i in p.closest) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.closest[i].x, p.closest[i].y);
+            ctx.strokeStyle = color + p.active + ')';
+            ctx.stroke();
+        }
+    }
+// 156,217,249
+    function Circle(pos, rad, color) {
+        var _this = this;
+        (function() {
+            _this.pos = pos || null;
+            _this.radius = rad || null;
+            _this.color = color || null;
+        })();
+        this.draw = function() {
+            if (!_this.active) return;
+            ctx.beginPath();
+            ctx.arc(_this.pos.x, _this.pos.y, _this.radius, 0, 2 * Math.PI, false);
+            ctx.fillStyle = dot_color;
+             // console.log(_this.active);
+            ctx.fill();
+        };
+    }
+
+    function getDistance(p1, p2) {
+        return Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2);
+    }
+})();
+  </script>
+
+  
+  
+
+</body>
+</html>
+ 
